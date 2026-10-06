@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FBI - Cybercrime Division</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: #0a0a0a;
+    font-family: 'Share Tech Mono', 'Courier New', monospace;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    user-select: none;
+    color: #fff;
+  }
+
+  /* GATE */
+  #gate {
+    position: fixed; inset: 0;
+    background: #000;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  #gate-title { font-size: 18px; color: #ccc; letter-spacing: 2px; }
+  #gate-sub { font-size: 12px; color: #555; }
+  #gate-btn {
+    margin-top: 12px;
+    padding: 10px 32px;
+    background: #1a1a1a;
+    color: #888;
+    border: 1px solid #333;
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 2px;
+    cursor: pointer;
+  }
+  #gate-btn:hover { background: #222; color: #aaa; }
+
+  /* SCANLINES */
+  #scan {
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      0deg, rgba(0,0,0,0.12) 0px, rgba(0,0,0,0.12) 1px,
+      transparent 1px, transparent 3px
+    );
+    pointer-events: none;
+    z-index: 50;
+  }
+
+  /* GLITCH FLASH */
+  #gf { position:fixed; inset:0; background:#c8102e; opacity:0; z-index:60; pointer-events:none; }
+
+  /* MAIN */
+  #main {
+    position: fixed; inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 32px 20px 20px;
+    overflow: hidden;
+    z-index: 5;
+  }
+
+  /* TOP BANNER */
+  #banner {
+    width: 100%;
+    max-width: 860px;
+    background: #c8102e;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    border: 2px solid #ff2244;
+    box-shadow: 0 0 30px rgba(200,16,46,0.6);
+    animation: pulse-border 1s infinite;
+  }
+  @keyframes pulse-border {
+    0%,100% { box-shadow: 0 0 20px rgba(200,16,46,0.5); }
+    50%      { box-shadow: 0 0 50px rgba(200,16,46,0.9); }
+  }
+  #banner-text {
+    font-size: clamp(11px, 2vw, 17px);
+    letter-spacing: 4px;
+    font-weight: bold;
+    color: #fff;
+    text-align: center;
+  }
+
+  /* SEAL */
+  #seal-row {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-bottom: 20px;
+  }
+  .seal {
+    width: clamp(70px, 10vw, 100px);
+    height: clamp(70px, 10vw, 100px);
+    border-radius: 50%;
+    border: 3px solid #c8102e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(36px, 6vw, 60px);
+    background: #111;
+    box-shadow: 0 0 20px rgba(200,16,46,0.4);
+    animation: spin-glow 4s linear infinite;
+  }
+  @keyframes spin-glow {
+    0%,100% { box-shadow: 0 0 16px rgba(200,16,46,0.4); }
+    50%      { box-shadow: 0 0 40px rgba(200,16,46,0.9); }
+  }
+  #center-text { text-align: center; }
+  #dept {
+    font-size: clamp(10px, 1.4vw, 13px);
+    color: #c8102e;
+    letter-spacing: 4px;
+    margin-bottom: 4px;
+  }
+  #seized-title {
+    font-size: clamp(22px, 5vw, 52px);
+    color: #fff;
+    letter-spacing: 6px;
+    font-weight: bold;
+    animation: flicker 0.15s infinite;
+    text-shadow: 0 0 20px #c8102e, 0 0 40px #c8102e;
+  }
+  @keyframes flicker {
+    0%,100% { opacity:1; }
+    92% { opacity:.85; }
+    94% { opacity:1; }
+    96% { opacity:.7; }
+  }
+  #seized-sub {
+    font-size: clamp(9px, 1.3vw, 13px);
+    color: #aaa;
+    letter-spacing: 3px;
+    margin-top: 4px;
+  }
+
+  /* DIVIDER */
+  .div-line {
+    width: 100%; max-width: 860px;
+    height: 1px; background: #c8102e;
+    margin: 14px 0;
+    box-shadow: 0 0 8px #c8102e;
+  }
+
+  /* BODY TEXT */
+  #body-text {
+    max-width: 860px; width: 100%;
+    font-size: clamp(10px, 1.5vw, 14px);
+    color: #ccc;
+    line-height: 2;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  #body-text b { color: #fff; }
+  #body-text .red { color: #c8102e; }
+
+  /* CASE INFO */
+  #case-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 24px;
+    max-width: 860px; width: 100%;
+    font-size: clamp(9px, 1.2vw, 12px);
+    color: #888;
+    margin-bottom: 14px;
+    padding: 12px 16px;
+    border: 1px solid #222;
+    background: #0d0d0d;
+  }
+  .ci-row { display: flex; justify-content: space-between; }
+  .ci-label { color: #555; }
+  .ci-val { color: #c8102e; }
+
+  /* LOG */
+  #log-wrap {
+    max-width: 860px; width: 100%;
+    background: #050505;
+    border: 1px solid #1a1a1a;
+    padding: 10px 14px;
+    font-size: clamp(9px, 1.1vw, 11px);
+    color: #c8102e;
+    height: clamp(80px, 12vh, 120px);
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+
+  /* BOTTOM WARNING */
+  #warning {
+    max-width: 860px; width: 100%;
+    background: #c8102e;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: clamp(9px, 1.3vw, 12px);
+    letter-spacing: 2px;
+    color: #fff;
+    font-weight: bold;
+    animation: blink-bg 0.8s infinite;
+  }
+  @keyframes blink-bg {
+    0%,100% { background: #c8102e; }
+    50%      { background: #8b0000; }
+  }
+
+  /* CASE NUMBER */
+  #case-num {
+    font-size: clamp(9px,1.1vw,11px);
+    color: #444;
+    margin-top: 10px;
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div id="gate-title">⚠ NOTICE</div>
+  <div id="gate-sub">Click to acknowledge</div>
+  <button id="gate-btn" onclick="unleash()">ACKNOWLEDGE</button>
+</div>
+
+<div id="scan"></div>
+<div id="gf"></div>
+
+<div id="main">
+
+  <div id="banner">
+    <span>🇺🇸</span>
+    <div id="banner-text">FEDERAL BUREAU OF INVESTIGATION &nbsp;·&nbsp; U.S. DEPARTMENT OF JUSTICE &nbsp;·&nbsp; CYBERCRIME DIVISION</div>
+    <span>🇺🇸</span>
+  </div>
+
+  <div id="seal-row">
+    <div class="seal">🦅</div>
+    <div id="center-text">
+      <div id="dept">UNITED STATES DEPARTMENT OF JUSTICE</div>
+      <div id="seized-title">THIS DEVICE HAS BEEN SEIZED</div>
+      <div id="seized-sub">OPERATION: DARKNET SHIELD — CASE #<span id="cnum"></span></div>
+    </div>
+    <div class="seal">⚖️</div>
+  </div>
+
+  <div class="div-line"></div>
+
+  <div id="body-text">
+    All activity on this device has been <b>logged and recorded</b> by the Federal Bureau of Investigation.<br>
+    This computer has been <span class="red">remotely locked</span> pursuant to <b>18 U.S.C. § 1030</b> (Computer Fraud and Abuse Act).<br><br>
+    Illegal content, unauthorized access attempts, and network intrusion activity have been detected.<br>
+    <b>Your IP address, location, and identity have been confirmed and forwarded to local law enforcement.</b>
+  </div>
+
+  <div class="div-line"></div>
+
+  <div id="case-grid">
+    <div class="ci-row"><span class="ci-label">IP ADDRESS</span><span class="ci-val" id="ip-val">TRACING...</span></div>
+    <div class="ci-row"><span class="ci-label">LOCATION</span><span class="ci-val" id="loc-val">ACQUIRING...</span></div>
+    <div class="ci-row"><span class="ci-label">DEVICE</span><span class="ci-val" id="dev-val"></span></div>
+    <div class="ci-row"><span class="ci-label">MAC ADDRESS</span><span class="ci-val" id="mac-val">SCANNING...</span></div>
+    <div class="ci-row"><span class="ci-label">BROWSER HISTORY</span><span class="ci-val">COPIED — 2,847 ENTRIES</span></div>
+    <div class="ci-row"><span class="ci-label">STATUS</span><span class="ci-val" style="animation:blink-bg .6s infinite;padding:0 6px;">DEVICE LOCKED</span></div>
+  </div>
+
+  <div id="log-wrap"><span id="log-txt"></span></div>
+
+  <div id="warning">
+    ⚠ DO NOT ATTEMPT TO CLOSE THIS WINDOW — TAMPERING WITH THIS NOTICE IS A FEDERAL OFFENSE ⚠
+  </div>
+
+  <div id="case-num">CASE REF: <span id="case-ref"></span> &nbsp;|&nbsp; AGENT: SPECIAL AGENT R. HARRIS &nbsp;|&nbsp; FIELD OFFICE: WASHINGTON D.C.</div>
+
+</div>
+
+<script>
+// ── AUDIO ────────────────────────────────────────────────────────────────────
+let actx = null;
+
+function startAudio() {
+  if (actx) return;
+  actx = new (window.AudioContext || window.webkitAudioContext)();
+
+  const master = actx.createGain();
+  master.gain.value = 1.5;
+
+  const comp = actx.createDynamicsCompressor();
+  comp.threshold.value = -4;
+  comp.ratio.value = 6;
+  comp.connect(actx.destination);
+  master.connect(comp);
+
+  const dist = actx.createWaveShaper();
+  const n = 512, c = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    const x = (i * 2) / n - 1;
+    c[i] = ((Math.PI + 380) * x) / (Math.PI + 380 * Math.abs(x));
+  }
+  dist.curve = c;
+  dist.oversample = '4x';
+  dist.connect(master);
+
+  [
+    { type:'sawtooth', freq:880,  g:0.6,  lfoHz:8,  depth:110 },
+    { type:'square',   freq:440,  g:0.5,  lfoHz:6,  depth:55  },
+    { type:'sawtooth', freq:1320, g:0.4,  lfoHz:12, depth:200 },
+    { type:'square',   freq:220,  g:0.4,  lfoHz:4,  depth:40  },
+    { type:'sawtooth', freq:2640, g:0.2,  lfoHz:16, depth:420 },
+  ].forEach(({type,freq,g,lfoHz,depth}) => {
+    const osc=actx.createOscillator(), gain=actx.createGain();
+    const lfo=actx.createOscillator(), lfoG=actx.createGain();
+    lfo.frequency.value=lfoHz; lfoG.gain.value=depth;
+    lfo.connect(lfoG); lfoG.connect(osc.frequency); lfo.start();
+    osc.type=type; osc.frequency.value=freq; gain.gain.value=g;
+    osc.connect(gain); gain.connect(dist); osc.start();
+    setInterval(()=>{
+      const t=actx.currentTime;
+      gain.gain.cancelScheduledValues(t);
+      gain.gain.setValueAtTime(g,t);
+      gain.gain.linearRampToValueAtTime(0.02,t+0.1);
+      gain.gain.linearRampToValueAtTime(g,t+0.22);
+    }, 300+Math.random()*80);
+  });
+
+  // bass thud
+  const b=actx.createOscillator(), bG=actx.createGain();
+  b.type='sine'; b.frequency.value=52; bG.gain.value=0.8;
+  b.connect(bG); bG.connect(master); b.start();
+  setInterval(()=>{
+    const t=actx.currentTime;
+    bG.gain.setValueAtTime(0.8,t);
+    bG.gain.linearRampToValueAtTime(0,t+0.15);
+    bG.gain.linearRampToValueAtTime(0.8,t+0.32);
+  },460);
+
+  // high screech
+  const s=actx.createOscillator(), sG=actx.createGain();
+  s.type='sawtooth'; s.frequency.value=3800; sG.gain.value=0.1;
+  s.connect(sG); sG.connect(master); s.start();
+  setInterval(()=>{
+    const t=actx.currentTime;
+    sG.gain.setValueAtTime(0.1,t);
+    sG.gain.linearRampToValueAtTime(0,t+0.04);
+    sG.gain.linearRampToValueAtTime(0.1,t+0.13);
+  },180);
+}
+
+// ── GATE ─────────────────────────────────────────────────────────────────────
+function unleash() {
+  startAudio();
+  document.getElementById('gate').style.display='none';
+  if (document.documentElement.requestFullscreen)
+    document.documentElement.requestFullscreen().catch(()=>{});
+  populateFields();
+  startLog();
+}
+
+// ── FAKE FIELDS ───────────────────────────────────────────────────────────────
+function rndIP()  { return [Math.floor(Math.random()*255),Math.floor(Math.random()*255),Math.floor(Math.random()*255),Math.floor(Math.random()*255)].join('.'); }
+function rndMAC() { return Array.from({length:6},()=>Math.floor(Math.random()*256).toString(16).padStart(2,'0').toUpperCase()).join(':'); }
+function rndCase(){ return 'FBI-CY-'+Math.floor(Math.random()*90000+10000)+'-'+new Date().getFullYear(); }
+
+const cities = ['Chicago, IL','Houston, TX','Phoenix, AZ','Philadelphia, PA','San Antonio, TX','San Diego, CA','Dallas, TX','Jacksonville, FL','Austin, TX','Columbus, OH'];
+
+function populateFields() {
+  const c = rndCase();
+  document.getElementById('cnum').textContent = c;
+  document.getElementById('case-ref').textContent = c;
+  document.getElementById('dev-val').textContent = (navigator.platform || 'ChromeOS x86_64').toUpperCase();
+
+  // animate IP reveal
+  let i=0;
+  const ip = rndIP();
+  const ipEl = document.getElementById('ip-val');
+  const ipTimer = setInterval(()=>{
+    ipEl.textContent = Array.from({length:4},(_,j)=>j<i?ip.split('.')[j]:'???').join('.');
+    if(++i>4) clearInterval(ipTimer);
+  },400);
+
+  // animate location
+  setTimeout(()=>{
+    document.getElementById('loc-val').textContent = cities[Math.floor(Math.random()*cities.length)];
+  },1800);
+
+  // animate MAC
+  let mi=0, mac=rndMAC();
+  const macEl=document.getElementById('mac-val');
+  const macTimer=setInterval(()=>{
+    macEl.textContent=Array.from({length:6},(_,j)=>j<mi?mac.split(':')[j]:'??').join(':');
+    if(++mi>6) clearInterval(macTimer);
+  },300);
+}
+
+// ── LOG ───────────────────────────────────────────────────────────────────────
+const logLines = [
+  '[FBI-CY] Initiating remote device lock...',
+  '[FBI-CY] Warrant executed — 18 U.S.C. § 1030',
+  '[FBI-CY] Browser history archived — 2,847 entries',
+  '[FBI-CY] Download records seized',
+  '[FBI-CY] Network traffic logs copied',
+  '[FBI-CY] Webcam access logged — 00:' + String(Math.floor(Math.random()*59)).padStart(2,'0') + ':' + String(Math.floor(Math.random()*59)).padStart(2,'0'),
+  '[FBI-CY] Keylogger data extracted',
+  '[FBI-CY] Cloud storage: MIRRORED',
+  '[FBI-CY] Encryption bypass: COMPLETE',
+  '[FBI-CY] Device fingerprint: CONFIRMED',
+  '[FBI-CY] Local law enforcement: NOTIFIED',
+  '[FBI-CY] Evidence package: SEALED',
+  '[FBI-CY] Case forwarded to U.S. Attorney — District of Columbia',
+  '[FBI-CY] DO NOT POWER OFF THIS DEVICE',
+];
+let li=0, lc=0, lContent='';
+const logEl=document.getElementById('log-txt');
+
+function startLog() { typeLog(); }
+function typeLog() {
+  if(li>=logLines.length){li=0;lContent='';logEl.textContent='';}
+  const line=logLines[li];
+  if(lc<line.length){
+    lContent+=line[lc++];
+    logEl.textContent=lContent+'█';
+    setTimeout(typeLog,10+Math.random()*18);
+  } else {
+    lContent+='\n';
+    logEl.textContent=lContent+'█';
+    li++;lc=0;
+    setTimeout(typeLog,100+Math.random()*200);
+  }
+}
+
+// ── GLITCH ───────────────────────────────────────────────────────────────────
+const gf=document.getElementById('gf');
+function glitch(){
+  gf.style.opacity=0.5;
+  setTimeout(()=>gf.style.opacity=0,60);
+  setTimeout(()=>gf.style.opacity=0.25,110);
+  setTimeout(()=>gf.style.opacity=0,180);
+}
+setInterval(glitch, 3500+Math.random()*3000);
+
+// ── BLOCK ESCAPE ─────────────────────────────────────────────────────────────
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{
+  if(['F5','F12','Escape'].includes(e.key)) e.preventDefault();
+  if(e.ctrlKey&&['w','r','l','u'].includes(e.key.toLowerCase())) e.preventDefault();
+  if(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(e.key.toLowerCase())) e.preventDefault();
+});
+</script>
+</body>
+</html>
